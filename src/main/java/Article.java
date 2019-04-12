@@ -69,7 +69,7 @@ public class Article {
         StringBuilder referencesStringBuilder = new StringBuilder();
         referencesStringBuilder.append("[\n");
         for(int i = 0; i < references.size(); i++) {
-            String reference = references.get(i).toString();
+            String reference = references.get(i).fancyPrint();
             referencesStringBuilder.append(reference);
             if(i < references.size() - 1) {
                 referencesStringBuilder.append(",\n");
@@ -97,29 +97,16 @@ public class Article {
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s", title, date, getAuthorsString());
+        return String.format("%s\t%s\t%s\n", title, date, getAuthorsString());
     }
 
-    public String print() {
-        String s;
-        if(references.size() == 0) {
-            s = String.format("{\n" +
-                    "TITLE => \t %s\n" +
-                    "AUTHORS => \t %s\n" +
-                    "DATE => \t %s\n" +
-                    "}", this.title, this.getAuthorsString(), this.date
-            );
-        } else {
-            s = String.format("{\n" +
-                    "TITLE => \t %s\n" +
-                    "AUTHORS => \t %s\n" +
-                    "DATE => \t %s\n" +
-                    "REFERENCES => \t %s\n" +
-                    "}", this.title, this.getAuthorsString(), this.date, this.getReferencesString()
-            );
-        }
-        System.out.println(s);
-        return s;
+    public String fancyPrint() {
+        return String.format("{\n" +
+                "TITLE => \t %s\n" +
+                "AUTHORS => \t %s\n" +
+                "DATE => \t %s\n" +
+                "}", this.title, this.getAuthorsString(), this.date
+        );
     }
 
 }
