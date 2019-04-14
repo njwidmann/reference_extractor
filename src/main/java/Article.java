@@ -17,16 +17,20 @@ public class Article {
     private String date;
     private List<Article> references;
 
-    public Article(String file, ContentExtractor contentExtractor) {
+    public Article(String file) {
         try {
             InputStream inputStream = new FileInputStream(file);
+            ContentExtractor contentExtractor = new ContentExtractor();
             contentExtractor.setPDF(inputStream);
             // extract metadata
             DocumentMetadata documentMetaData = contentExtractor.getMetadata();
             // extract title
-            this.title = documentMetaData.getTitle();
+            this.title = assertStringNotNull(documentMetaData.getTitle());
             // extract year
-            this.date = documentMetaData.getDate(DateType.PUBLISHED).getYear();
+            if(documentMetaData.getDate(DateType.PUBLISHED) != null)
+                this.date = assertStringNotNull(documentMetaData.getDate(DateType.PUBLISHED).getYear());
+            else
+                this.date = "null";
             //extract authors
             List<DocumentAuthor> documentAuthors = documentMetaData.getAuthors();
             this.authors = new ArrayList<String>();
@@ -47,9 +51,9 @@ public class Article {
     }
 
     public Article(BibEntry bibEntry) {
-        this.title = bibEntry.getFirstFieldValue(BibEntryFieldType.TITLE);
-        this.authors = bibEntry.getAllFieldValues(BibEntryFieldType.AUTHOR);
-        this.date = bibEntry.getFirstFieldValue(BibEntryFieldType.YEAR);
+        this.title = assertStringNotNull(bibEntry.getFirstFieldValue(BibEntryFieldType.TITLE));
+        this.authors = assertListNotNull(bibEntry.getAllFieldValues(BibEntryFieldType.AUTHOR));
+        this.date = assertStringNotNull(bibEntry.getFirstFieldValue(BibEntryFieldType.YEAR));
         this.references = new ArrayList<Article>();
     }
 
@@ -77,6 +81,14 @@ public class Article {
         }
         referencesStringBuilder.append("\n]");
         return referencesStringBuilder.toString();
+    }
+
+    private String assertStringNotNull(String s) {
+        return (s != null) ? s : "null";
+    }
+
+    private List<String> assertListNotNull(List<String> s) {
+        return (s != null) ? s : new ArrayList<String>();
     }
 
     public String getTitle() {
